@@ -1,5 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+import re
 
 app = FastAPI()
 
@@ -16,6 +17,11 @@ rooms = {}
 @app.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
   await websocket.accept()
+
+  if not re.fullmatch(r"[a-zA-Z0-9]{4,20}", room_id):
+    await websocket.send_text("error:invalid_room_id")
+    await websocket.close()
+    return
 
   if room_id not in rooms:
     rooms[room_id] = []
