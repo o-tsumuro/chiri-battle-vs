@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useValidation from '../hooks/useValidation';
+import ErrorMessage from '../components/ErrorMessage';
 
 const Home = () => {
   const [gameState, setGameState] = useState('solo');
@@ -7,39 +9,16 @@ const Home = () => {
   const [userName, setUserName] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
-  const errorMessages = {
-    invalid_username: 'ユーザー名が不正です（20文字以下）',
-    username_taken: 'このユーザー名はすでに使われています',
-    invalid_room_id: 'ルームIDは半角英数字で4〜20文字にしてください',
-    room_full: 'このルームは満員です',
-  };
+  const { validateUser } = useValidation();
 
   const handleBattleClick = async () => {
-    if (!roomId || !userName) {
-      setError('ユーザー名とルームIDの両方を入力してください');
+    const validationError = await validateUser(userName, roomId);
+    if (validationError) {
+      setError(validationError);
       return;
     }
-    try {
-      const res = await fetch("http://localhost:8000/validate-user", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_name: userName, room_id: roomId }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(errorMessages[data.error] || "不明なエラーです");
-        return;
-      }
-
-      setError('');
-      navigate('/battle', { state: { userName, roomId } });
-    } catch (err) {
-      console.error(err);
-      setError("通信エラーが発生しました");
-    }
+    setError('');
+    navigate('/battle', { state: { userName, roomId } });
   };
 
   return (
@@ -60,18 +39,12 @@ const Home = () => {
       {gameState === 'solo' ? (
         <>
           <h2>1人プレイ</h2>
-          <button
-            onClick={() => navigate("/solo")}
-          >
-            ゲーム開始
-          </button>
+          <button onClick={() => navigate("/solo")}>ゲーム開始</button>
         </>
       ) : (
         <>
           <h2>1対1</h2>
-          {error && (
-            <div style={{ color: 'red' }}>{error}</div>
-          )}
+          <ErrorMessage message={error} />
           <input
             type="text"
             value={userName}
