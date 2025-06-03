@@ -8,14 +8,39 @@ const Home = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleBattleClick = () => {
+  const errorMessages = {
+    invalid_username: 'ユーザー名が不正です（20文字以下）',
+    username_taken: 'このユーザー名はすでに使われています',
+    invalid_room_id: 'ルームIDは半角英数字で4〜20文字にしてください',
+    room_full: 'このルームは満員です',
+  };
+
+  const handleBattleClick = async () => {
     if (!roomId || !userName) {
       setError('ユーザー名とルームIDの両方を入力してください');
       return;
     }
-    setError('');
-    navigate('/battle', { state: { userName, roomId } });
-  }
+    try {
+      const res = await fetch("http://localhost:8000/validate-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_name: userName, room_id: roomId }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(errorMessages[data.error] || "不明なエラーです");
+        return;
+      }
+
+      setError('');
+      navigate('/battle', { state: { userName, roomId } });
+    } catch (err) {
+      console.error(err);
+      setError("通信エラーが発生しました");
+    }
+  };
 
   return (
     <div style={{ padding: 20 }}>
