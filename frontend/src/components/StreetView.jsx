@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { GoogleMap, StreetViewPanorama } from '@react-google-maps/api';
 
 const containerStyle = {
@@ -6,6 +7,9 @@ const containerStyle = {
 };
 
 const StreetView = ({ location }) => {
+  const [pov, setPov] = useState({ heading: 100, pitch: 0 });
+  const panoramaRef = useRef(null);
+
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
@@ -17,8 +21,18 @@ const StreetView = ({ location }) => {
         <StreetViewPanorama
           position={location}
           visible={true}
+          onPovChanged={() => {
+            const panorama = panoramaRef.current;
+            if (panorama) {
+              const newPov = panorama.getPov();
+              setPov(newPov);
+            }
+          }}
+          onLoad={(panorama) => {
+            panoramaRef.current = panorama;
+          }}
           options={{
-            pov: { heading: 100, pitch: 0 },
+            pov: {pov},
             zoom: 1,
             addressControl: false,
             enableCloseButton: false,
