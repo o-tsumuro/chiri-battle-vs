@@ -17,7 +17,7 @@ export const useDistanceCalc = () => {
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    const distance = R * c; // メートル単位で距離を計算
+    const distance = Math.trunc(R * c);
 
     return distance;
   };
