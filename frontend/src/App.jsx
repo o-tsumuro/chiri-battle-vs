@@ -1,17 +1,28 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { LoadScript } from '@react-google-maps/api';
 import Home from './pages/Home';
 import SoloPlay from './pages/SoloPlay';
 import Battle from './pages/Battle';
 
 function App() {
+  const [gameKey, setGameKey] = useState(0);
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+  const handleRetry = () => {
+    setGameKey(prev => prev + 1);
+    setGameState('playing');
+  }
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/solo" element={<SoloPlay />} />
-        <Route path="/battle" element={<Battle />} />
-      </Routes>
+      <LoadScript googleMapsApiKey={apiKey} key={gameKey}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/solo" element={<SoloPlay onRetry={handleRetry}/>} />
+          <Route path="/battle" element={<Battle />} />
+        </Routes>
+      </LoadScript>
     </BrowserRouter>
   );
 }
