@@ -26,18 +26,23 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str 
   rooms[room_id].append({"name": user_name, "ws": websocket})
   names.add(user_name)
 
-  for member in rooms[room_id]:
+  if len(rooms[room_id]) == 1:
     await websocket.send_json({
-      "type": "user_joined",
-      "userName": member["name"],
+      "type": "self_joined_first",
+    })
+  else:
+    opponent_name = rooms[room_id][0]["name"]
+    await websocket.send_json({
+      "type": "self_joined_second",
+      "opponentName": opponent_name,
     })
 
-  for member in rooms[room_id]:
-    if member["ws"] != websocket:
-      await member["ws"].send_json({
-        "type": "user_joined",
-        "userName": user_name,
-      })
+    for member in rooms[room_id]:
+      if member["ws"] != websocket:
+        await member["ws"].send_json({
+          "type": "opponent_joined",
+          "userName": user_name,
+        })
   
   try:
     while True:

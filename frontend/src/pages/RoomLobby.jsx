@@ -16,30 +16,32 @@ const RoomLobby = () => {
     const socket = new WebSocket(`ws://localhost:8000/ws/${roomId}?user_name=${userName}`);
     ws.current = socket;
 
-    socket.onopen = () => {
-        if (!opponentUserNameRef.current) {
-          addLog("ルームを作成しました。");
-          addLog("相手の参加を待っています。");
-        } else {
-          addLog(`${opponentUserNameRef.current} のルームに参加しました。`);
-        }
-    }
-
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === "user_joined") {
-        if (data.userName !== userName) {
-          setOpponentUserName(data.userName);
-          opponentUserNameRef.current = data.userName;
-          addLog(`${data.userName} がルームに参加しました。`);
-        }
+
+      if (data.type === "self_joined_first") {
+        addLog("ルームを作成しました。");
+        addLog("相手の参加を待っています。");
       }
+
+      if (data.type === "self_joined_second") {
+        setOpponentUserName(data.opponentName);
+        opponentUserNameRef.current = data.opponentName;
+        addLog(`${data.opponentName} のルームに参加しました。`);
+      }
+
+      if (data.type === "opponent_joined") {
+        setOpponentUserName(data.userName);
+        opponentUserNameRef.current = data.userName;
+        addLog(`${data.userName} がルームに参加しました。`);
+      }
+
       if (data.type === "user_left") {
         if (data.userName === opponentUserNameRef.current) {
-          addLog(`${opponentUserNameRef.current} が退出しました。`);
+          addLog(`${data.userName} が退出しました。`);
           setOpponentUserName(null);
-          opponentUserNameRef.current = null;
-          setIsOpponentReady(false);
+          opponentUserName.current = null;
+          setIsOpponentReady = false;
         }
       }
     }
