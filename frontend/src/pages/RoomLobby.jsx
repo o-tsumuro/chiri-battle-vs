@@ -9,11 +9,22 @@ const RoomLobby = () => {
   const [opponentUserName, setOpponentUserName] = useState(null);
   const opponentUserNameRef = useRef(null);
   const [logs, setLogs] = useState([]);
+  const initialJoinRef = useRef(true);
   const ws = useRef(null);
   
   useEffect(() => {
     const socket = new WebSocket(`ws://localhost:8000/ws/${roomId}?user_name=${userName}`);
     ws.current = socket;
+
+    socket.onopen = () => {
+      addLog("ルームに参加しました。");
+      setTimeout(() => {
+        if (!opponentUserNameRef.current) {
+          addLog("相手の参加を待っています。");
+        }
+        initialJoinRef.current = false;
+      }, 500);
+    }
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -21,6 +32,12 @@ const RoomLobby = () => {
         if (data.userName !== userName) {
           setOpponentUserName(data.userName);
           opponentUserNameRef.current = data.userName;
+
+          if (initialJoinRef.current) {
+            addLog(`${data.userName} がすでに参加しています。`);
+          } else {
+            addLog(`${data.userName} がルームに参加しました。`);
+          }
         }
       }
       if (data.type === "user_left") {
