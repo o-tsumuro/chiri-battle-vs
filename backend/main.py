@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Query
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import re
@@ -13,18 +13,35 @@ app.add_middleware(
   allow_headers=["*"],
 )
 
-names = set()
 rooms = {}
+names = set()
 
 @app.websocket("/ws/{room_id}")
-async def websocket_endpoint(websocket: WebSocket, user_name: str, room_id: str):
+async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str = Query(...)):
   await websocket.accept()
 
+  # ルームの初期化
   if room_id not in rooms:
     rooms[room_id] = []
+
+  # 既にルームにいるユーザーの名前を新規参加者に送る
+  for member in rooms[room_id]:
+    await websocket.send_json({
+      "type": "user_joined",
+      "userName": member["name"],
+    })
   
+  # このユーザーを部屋に登録
+  rooms[room_id].append({"name": user_name, "ws": websocket})
   names.add(user_name)
-  rooms[room_id].append(websocket)
+
+  # 他のクライアントにこのユーザーの参加を通知
+  for member in rooms[room_id]:
+    if member["ws"] != websocket:
+      await member["ws"].send_json({
+        "type": "user_joined",
+        "userName": user_name,
+      })
   
   try:
     while True:

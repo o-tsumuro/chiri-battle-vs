@@ -10,8 +10,15 @@ const RoomLobby = () => {
   const ws = useRef(null);
   
   useEffect(() => {
-    const socket = new WebSocket(`ws://localhost:8000/ws/${roomId}`);
+    const socket = new WebSocket(`ws://localhost:8000/ws/${roomId}?user_name=${userName}`);
     ws.current = socket;
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === "user_joined") {
+        setOpponentUserName(data.userName);
+      }
+    }
 
     socket.onclose = () => {
       console.log('WebSocket切断');
@@ -26,15 +33,17 @@ const RoomLobby = () => {
     <>
       <h2>ルームID: {roomId}</h2>
       <div>
-        {userName}(you)
+        {userName}(あなた)
         <button
           onClick={() => setIsMyReady(!isMyReady)}
           style={{ color: isMyReady ? 'green': 'gray' }}
         >
           Ready
         </button>
-        </div>
-        <div>
+      </div>
+      <div>
+        {opponentUserName}(相手)
+
       </div>
     </>
   );
