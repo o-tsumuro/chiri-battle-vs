@@ -50,8 +50,15 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str 
         await client.send_text(data)
   except WebSocketDisconnect:
     print('切断されました')
-    rooms[room_id].remove(websocket)
+    rooms[room_id] = [member for member in rooms[room_id] if member["ws"] != websocket]
     names.discard(user_name)
+
+    for member in rooms.get(room_id, []):
+      await member["ws"].send_josn({
+        "type": "user_left",
+        "userName": user_name,
+      })
+
     if len(rooms[room_id]) == 0:
       del rooms[room_id]
 

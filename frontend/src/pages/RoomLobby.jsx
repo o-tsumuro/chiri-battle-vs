@@ -20,6 +20,12 @@ const RoomLobby = () => {
           setOpponentUserName(data.userName);
         }
       }
+      if (data.type === "user_left") {
+        if (data.userName === opponentUserName) {
+          setOpponentUserName(null);
+          setIsOpponentReady(false);
+        }
+      }
     }
 
     socket.onclose = () => {
@@ -45,7 +51,6 @@ const RoomLobby = () => {
       </div>
       <div>
         {opponentUserName}(相手)
-
       </div>
     </>
   );
