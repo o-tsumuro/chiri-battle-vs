@@ -17,10 +17,12 @@ const RoomLobby = () => {
     ws.current = socket;
 
     socket.onopen = () => {
-      addLog("ルームに参加しました。");
       setTimeout(() => {
         if (!opponentUserNameRef.current) {
+          addLog("ルームを作成しました。");
           addLog("相手の参加を待っています。");
+        } else {
+          addLog(`${opponentUserNameRef.current} のルームに参加しました。`);
         }
         initialJoinRef.current = false;
       }, 500);
@@ -32,12 +34,11 @@ const RoomLobby = () => {
         if (data.userName !== userName) {
           setOpponentUserName(data.userName);
           opponentUserNameRef.current = data.userName;
-
-          if (initialJoinRef.current) {
-            addLog(`${data.userName} がすでに参加しています。`);
-          } else {
-            addLog(`${data.userName} がルームに参加しました。`);
-          }
+          setTimeout(() => {
+            if (initialJoinRef.current) {
+              addLog(`${data.userName} がルームに参加しました。`);
+            }
+          }, 500);
         }
       }
       if (data.type === "user_left") {
@@ -75,9 +76,15 @@ const RoomLobby = () => {
           Ready
         </button>
       </div>
-      <div>
-        {opponentUserName}(相手)
-      </div>
+      {opponentUserName ? (
+        <div>
+          {opponentUserName}
+        </div>
+      ) : (
+        <div>
+
+        </div>
+      )}
       <div>
         <h3>ログ</h3>
         <ul>

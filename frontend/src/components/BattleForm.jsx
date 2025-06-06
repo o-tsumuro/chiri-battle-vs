@@ -41,7 +41,7 @@ const BattleForm = ({ resetErrorTrigger }) => {
         placeholder='ルームID(4~20文字の半角英数字)'
       />
       <br />
-      <button onClick={handleBattleClick}>ゲーム開始</button>
+      <button onClick={handleBattleClick}>ルーム作成/入室</button>
     </>
   );
 }
