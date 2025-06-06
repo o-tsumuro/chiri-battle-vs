@@ -7,6 +7,8 @@ const RoomLobby = () => {
   const location = useLocation();
   const { userName, roomId } = location.state;
   const [opponentUserName, setOpponentUserName] = useState(null);
+  const opponentUserNameRef = useRef(null);
+  const [logs, setLogs] = useState([]);
   const ws = useRef(null);
   
   useEffect(() => {
@@ -16,13 +18,16 @@ const RoomLobby = () => {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "user_joined") {
-        if (data.userName != userName) {
+        if (data.userName !== userName) {
           setOpponentUserName(data.userName);
+          opponentUserNameRef.current = data.userName;
         }
       }
       if (data.type === "user_left") {
-        if (data.userName === opponentUserName) {
+        if (data.userName === opponentUserNameRef.current) {
+          addLog(`${opponentUserNameRef.current} が退出しました。`);
           setOpponentUserName(null);
+          opponentUserNameRef.current = null;
           setIsOpponentReady(false);
         }
       }
@@ -35,7 +40,11 @@ const RoomLobby = () => {
     return () => {
       socket.close();
     };
-  }, [roomId]);
+  }, [roomId, userName]);
+
+  const addLog = (text) => {
+    setLogs((prev) => [...prev, text]);
+  }
   
   return (
     <>
@@ -51,6 +60,14 @@ const RoomLobby = () => {
       </div>
       <div>
         {opponentUserName}(相手)
+      </div>
+      <div>
+        <h3>ログ</h3>
+        <ul>
+          {logs.map((msg, idx) => (
+            <li key={idx}>{msg}</li>
+          ))}
+        </ul>
       </div>
     </>
   );

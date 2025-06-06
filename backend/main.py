@@ -20,22 +20,18 @@ names = set()
 async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str = Query(...)):
   await websocket.accept()
 
-  # ルームの初期化
   if room_id not in rooms:
     rooms[room_id] = []
 
-  # 既にルームにいるユーザーの名前を新規参加者に送る
+  rooms[room_id].append({"name": user_name, "ws": websocket})
+  names.add(user_name)
+
   for member in rooms[room_id]:
     await websocket.send_json({
       "type": "user_joined",
       "userName": member["name"],
     })
-  
-  # このユーザーを部屋に登録
-  rooms[room_id].append({"name": user_name, "ws": websocket})
-  names.add(user_name)
 
-  # 他のクライアントにこのユーザーの参加を通知
   for member in rooms[room_id]:
     if member["ws"] != websocket:
       await member["ws"].send_json({
@@ -54,7 +50,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str 
     names.discard(user_name)
 
     for member in rooms.get(room_id, []):
-      await member["ws"].send_josn({
+      await member["ws"].send_json({
         "type": "user_left",
         "userName": user_name,
       })
