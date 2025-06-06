@@ -4,6 +4,7 @@ import { LoadScript } from '@react-google-maps/api';
 import Home from './pages/Home';
 import SoloPlay from './pages/SoloPlay';
 import Battle from './pages/Battle';
+import RoomLobby from './pages/RoomLobby';
 
 function App() {
   const [gameKey, setGameKey] = useState(0);
@@ -20,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/solo" element={<SoloPlay onRetry={handleRetry}/>} />
-          <Route path="/battle" element={<Battle />} />
+          <Route path="/battle" element={<RoomLobby />} />
         </Routes>
       </LoadScript>
     </BrowserRouter>
