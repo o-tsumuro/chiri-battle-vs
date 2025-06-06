@@ -9,7 +9,7 @@ const RoomLobby = () => {
   const [opponentUserName, setOpponentUserName] = useState(null);
   const opponentUserNameRef = useRef(null);
   const [logs, setLogs] = useState([]);
-  const initialJoinRef = useRef(true);
+  const logEndRef = useRef(null);
   const ws = useRef(null);
   
   useEffect(() => {
@@ -17,15 +17,12 @@ const RoomLobby = () => {
     ws.current = socket;
 
     socket.onopen = () => {
-      setTimeout(() => {
         if (!opponentUserNameRef.current) {
           addLog("ルームを作成しました。");
           addLog("相手の参加を待っています。");
         } else {
           addLog(`${opponentUserNameRef.current} のルームに参加しました。`);
         }
-        initialJoinRef.current = false;
-      }, 500);
     }
 
     socket.onmessage = (event) => {
@@ -34,11 +31,7 @@ const RoomLobby = () => {
         if (data.userName !== userName) {
           setOpponentUserName(data.userName);
           opponentUserNameRef.current = data.userName;
-          setTimeout(() => {
-            if (initialJoinRef.current) {
-              addLog(`${data.userName} がルームに参加しました。`);
-            }
-          }, 500);
+          addLog(`${data.userName} がルームに参加しました。`);
         }
       }
       if (data.type === "user_left") {
@@ -60,12 +53,20 @@ const RoomLobby = () => {
     };
   }, [roomId, userName]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [logs]);
+
   const addLog = (text) => {
     setLogs((prev) => [...prev, text]);
   }
+
+  const scrollToBottom = () => {
+    logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
   
   return (
-    <>
+    <div>
       <h2>ルームID: {roomId}</h2>
       <div>
         {userName}(あなた)
@@ -87,13 +88,24 @@ const RoomLobby = () => {
       )}
       <div>
         <h3>ログ</h3>
-        <ul>
+        <div
+          style={{
+            border: '1px solid #ccc',
+            padding: 10,
+            height: 100,
+            overflowY: 'scroll',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
           {logs.map((msg, idx) => (
-            <li key={idx}>{msg}</li>
+            <div key={idx}>{msg}</div>
           ))}
-        </ul>
+          <div ref={logEndRef} />
+        </div>
       </div>
-    </>
+    </div>
   );
 }
 
