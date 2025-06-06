@@ -16,7 +16,9 @@ const RoomLobby = () => {
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "user_joined") {
-        setOpponentUserName(data.userName);
+        if (data.userName != userName) {
+          setOpponentUserName(data.userName);
+        }
       }
     }
 
