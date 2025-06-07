@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Query
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import json
 import re
 
 app = FastAPI()
@@ -31,24 +32,37 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str 
       "type": "self_joined_first",
     })
   else:
-    opponent_name = rooms[room_id][0]["name"]
+    opponent = rooms[room_id][0]
     await websocket.send_json({
       "type": "self_joined_second",
-      "opponentName": opponent_name,
+      "opponentName": opponent["name"],
     })
-
-    for member in rooms[room_id]:
-      if member["ws"] != websocket:
-        await member["ws"].send_json({
-          "type": "opponent_joined",
-          "userName": user_name,
-        })
+    await opponent["ws"].send_json({
+      "type": "opponent_joined",
+      "userName": user_name,
+    })
   
   try:
     while True:
-      data = await websocket.receive_text()
-      for client in rooms[room_id]:
-        await client.send_text(data)
+      msg = await websocket.receive_text()
+      data = json.loads(msg)
+
+      if data["type"] == "ready_status":
+        for member in rooms[room_id]:
+          if member["name"] == data["userName"]:
+            member["is_ready"] = data["isReady"]
+
+        for member in rooms[room_id]:
+          if member["name"] != data["userName"]:
+            await member["ws"].send_json({
+              "type": "ready_status",
+              "userName": data["userName"],
+              "isReady": data["isReady"],
+            })
+      else:
+        for client in rooms[room_id]:
+          await client["ws"].send_text(msg)
+
   except WebSocketDisconnect:
     print('切断されました')
     rooms[room_id] = [member for member in rooms[room_id] if member["ws"] != websocket]
