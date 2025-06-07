@@ -45,23 +45,9 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str 
   try:
     while True:
       msg = await websocket.receive_text()
-      data = json.loads(msg)
 
-      if data["type"] == "ready_status":
-        for member in rooms[room_id]:
-          if member["name"] == data["userName"]:
-            member["is_ready"] = data["isReady"]
-
-        for member in rooms[room_id]:
-          if member["name"] != data["userName"]:
-            await member["ws"].send_json({
-              "type": "ready_status",
-              "userName": data["userName"],
-              "isReady": data["isReady"],
-            })
-      else:
-        for client in rooms[room_id]:
-          await client["ws"].send_text(msg)
+      for client in rooms[room_id]:
+        await client["ws"].send_text(msg)
 
   except WebSocketDisconnect:
     print('切断されました')

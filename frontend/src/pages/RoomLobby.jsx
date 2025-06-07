@@ -44,17 +44,6 @@ const RoomLobby = () => {
           setIsOpponentReady(false);
         }
       }
-
-      if (data.type === "ready_status") {
-        if (data.userName !== userName) {
-          setIsOpponentReady(data.isReady);
-          if (data.isReady) {
-            addLog(`${opponentUserNameRef.current} 準備OK!`);
-          } else {
-            addLog(`${opponentUserNameRef.current} 準備を解除`);
-          }
-        }
-      }
     }
 
     socket.onclose = () => {
@@ -70,24 +59,6 @@ const RoomLobby = () => {
     scrollToBottom();
   }, [logs]);
 
-  const toggleReady = () => {
-    setIsMyReady((prev) => {
-      const newState = !prev;
-
-      if (ws.current?.readyState === WebSocket.OPEN) {
-        ws.current.send(JSON.stringify({
-          type: "ready_status",
-          isReady: newState,
-          userName,
-        }));
-      } else {
-        console.warn("WebSocket is not open");
-      }
-
-      return newState;
-    });
-  };
-
   const addLog = (text) => {
     setLogs((prev) => [...prev, text]);
   }
@@ -102,7 +73,6 @@ const RoomLobby = () => {
       <div>
         {userName}(あなた)
         <button
-          onClick={toggleReady}
           style={{ color: isMyReady ? 'green' : 'gray' }}
         >
           Ready
