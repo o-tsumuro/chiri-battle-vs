@@ -1,23 +1,29 @@
 
 const StartButton = ({ isHost, canStart }) => {
   return (
-    <button
-      disabled={! (isHost && canStart)}
-    >
+    <div>
+      <br />
       {isHost ? (
         canStart ? (
-          "GameStart!!"
+              <button
+                disabled={! (isHost && canStart)}
+                style={{
+                  backgroundColor: isHost && canStart ? "orange" : "lightgray",
+                }}
+              >
+                ゲームを開始する
+              </button>
         ) : (
-          "準備中..."
+          "相手の準備を待機中..."
         )
       ) : (
         canStart ? (
           "ホストの開始を待っています。"
         ) : (
-          "準備中..."
+          "相手の準備を待機中..."
         )
       )}
-    </button>
+    </div>
   );
 };
 

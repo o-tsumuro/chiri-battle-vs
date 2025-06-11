@@ -13,7 +13,7 @@ const SoloPlay = ({ onRetry }) => {
 
   return (
     <>
-      {gameState === 'playing' &&  <SoloPlayContainer onFinish={handleFinish} />}
+      {gameState === 'playing' && <SoloPlayContainer onFinish={handleFinish} />}
       {gameState === 'result' && <ResultScreen result={resultData} onRetry={onRetry} />}
     </>
   );

@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
 import LogPanel from '../components/LogPanel';
-import ReadyButton from '../components/ReadyButton';
 import RoomInfo from '../components/RoomInfo';
+import StartButton from '../components/StartButton';
 
 const RoomLobby = () => {
   const location = useLocation();
   const { userName, roomId } = location.state;
   const [opponentUserName, setOpponentUserName] = useState(null);
+  const [isHost, setIsHost] = useState(false);
   const [logs, setLogs] = useState([]);
   const [isReady, setIsReady] = useState(false);
   const [isOpponentReady, setIsOpponentReady] = useState(false);
@@ -17,20 +18,29 @@ const RoomLobby = () => {
     setLogs((prev) => [...prev, text]);
   };
 
-  const toggleReady = (target) => {
-    if (target === "self") {
-      setIsReady(prev => !prev)
-    } else if (target === "opponent") {
-      setIsOpponentReady(prev => !prev)
-    }
+  const toggleReady = () => {
+    setIsReady(prev => {
+      const nextReady = !prev;
+      ws.current.send(JSON.stringify({
+        type: "toggle_ready",
+        ready: nextReady,
+      }));
+      return nextReady;
+    });
   };
 
-  useWebSocket({
+  const ws = useWebSocket({
     userName,
     roomId,
+    setIsHost,
+    setOpponentUserName,
+    setIsOpponentReady,
     onLog: addLog,
-    onOpponentChange: setOpponentUserName,
   });
+
+  console.log("isHost:", isHost);
+  console.log("isReady:", isReady);
+  console.log("isOpponentReady:", isOpponentReady);
 
   return (
     <>
@@ -38,11 +48,13 @@ const RoomLobby = () => {
         roomId={roomId}
         userName={userName}
         opponentUserName={opponentUserName}
-      />
-      <ReadyButton
         isReady={isReady}
         isOpponentReady={isOpponentReady}
         toggleReady={toggleReady}
+      />
+      <StartButton
+        isHost={isHost}
+        canStart={isReady && isOpponentReady}
       />
       <LogPanel logs={logs} />
     </>

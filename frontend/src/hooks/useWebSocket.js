@@ -6,7 +6,7 @@ export const useWebSocket = ({
   setIsHost,
   setOpponentUserName,
   setIsOpponentReady,
-  onLog,
+  onLog
 }) => {
   const ws = useRef(null);
   const opponentRef = useRef(null);
