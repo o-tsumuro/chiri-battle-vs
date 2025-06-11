@@ -1,4 +1,4 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request, Query
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import json
@@ -18,21 +18,31 @@ rooms = {}
 names = set()
 
 @app.websocket("/ws/{room_id}")
-async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str = Query(...)):
+async def websocket_endpoint(websocket: WebSocket, room_id: str):
   await websocket.accept()
+  user_name = websocket.query_params.get("user_name")
 
   if room_id not in rooms:
     rooms[room_id] = []
 
-  rooms[room_id].append({"name": user_name, "ws": websocket})
+  rooms[room_id].append({
+    "name": user_name,
+    "ws": websocket,
+    "ready": False,
+  })
   names.add(user_name)
 
-  if len(rooms[room_id]) == 1:
+  opponent = None
+  for user in rooms[room_id]:
+    if user["name"] != user_name:
+      opponent = user
+      break
+
+  if opponent is None:
     await websocket.send_json({
       "type": "self_joined_first",
     })
   else:
-    opponent = rooms[room_id][0]
     await websocket.send_json({
       "type": "self_joined_second",
       "opponentName": opponent["name"],
@@ -41,13 +51,25 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, user_name: str 
       "type": "opponent_joined",
       "userName": user_name,
     })
-  
+
   try:
     while True:
       msg = await websocket.receive_text()
+      json_data = json.loads(msg)
+
+      if json_data["type"] == "toggle_ready":
+        ready = json_data["ready"]
+        sender_name = user_name
+        
+        for member in rooms[room_id]:
+          if member["name"] != sender_name:
+            await member["ws"].send_json({
+              "type": "toggle_opponent_ready",
+              "ready": ready,
+            })
 
       for client in rooms[room_id]:
-        await client["ws"].send_text(msg)
+        await client["ws"].send_json(json_data)
 
   except WebSocketDisconnect:
     print('切断されました')
