@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { LoadScript } from '@react-google-maps/api';
 import Home from './pages/Home';
 import SoloPlay from './pages/SoloPlay';
-import Battle from './pages/Battle';
 import RoomLobby from './pages/RoomLobby';
 
 function App() {

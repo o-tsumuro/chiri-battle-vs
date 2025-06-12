@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
-import LogPanel from '../components/LogPanel';
-import RoomInfo from '../components/RoomInfo';
-import StartButton from '../components/StartButton';
+import LogPanel from '../components/RoomLobby/LogPanel';
+import RoomInfo from '../components/RoomLobby/RoomInfo';
+import StartButton from '../components/RoomLobby/StartButton';
 
 const RoomLobby = () => {
   const location = useLocation();
@@ -37,11 +37,7 @@ const RoomLobby = () => {
     setIsOpponentReady,
     onLog: addLog,
   });
-
-  console.log("isHost:", isHost);
-  console.log("isReady:", isReady);
-  console.log("isOpponentReady:", isOpponentReady);
-
+  
   return (
     <>
       <RoomInfo
