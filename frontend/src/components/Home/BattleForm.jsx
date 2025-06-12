@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useValidation from '../hooks/useValidation';
+import useValidation from '../../hooks/useValidation';
 import ErrorMessage from './ErrorMessage';
 
 const BattleForm = ({ resetErrorTrigger }) => {
@@ -26,6 +26,7 @@ const BattleForm = ({ resetErrorTrigger }) => {
 
   return (
     <>
+      <h2>1対1</h2>
       <ErrorMessage message={error} />
       <input
         type="text"
