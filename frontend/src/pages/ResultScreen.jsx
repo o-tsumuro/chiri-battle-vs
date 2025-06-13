@@ -1,5 +1,5 @@
 import { GoogleMap, Marker, Polyline } from "@react-google-maps/api";
-import ResultFooter from "../components/ResultFooter";
+import ResultFooter from "../components/SoloPlay/ResultFooter";
 
 const ResultScreen = ({ result, onRetry }) => {
   if (!result || result.distance === null) return <p>計算中...</p>;

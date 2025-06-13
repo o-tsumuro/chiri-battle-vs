@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ResultScreen from './ResultScreen.jsx';
-import SoloPlayContainer from "../components/SoloPlayContainer";
+import SoloPlayContainer from "../components/SoloPlay/SoloPlayContainer.jsx";
 
 const SoloPlay = ({ onRetry }) => {
   const [gameState, setGameState] = useState('playing');

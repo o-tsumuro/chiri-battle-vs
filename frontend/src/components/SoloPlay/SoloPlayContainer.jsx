@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useDistanceCalc } from '../hooks/useDistanceCalc';
-import { useRandomLocation } from '../hooks/useRandomLocation.js';
+import { useDistanceCalc } from '../../hooks/useDistanceCalc.js';
+import { useRandomLocation } from '../../hooks/useRandomLocation.js';
 import StreetView from './StreetView.jsx';
 import MiniMap from './MiniMap.jsx';
 
