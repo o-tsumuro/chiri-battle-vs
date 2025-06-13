@@ -21,7 +21,7 @@ const BattleForm = ({ resetErrorTrigger }) => {
       return;
     }
     setError('');
-    navigate('/battle', { state: { userName, roomId } });
+    navigate(`/battle/${roomId}/lobby`, { state: { userName } });
   };
 
   return (

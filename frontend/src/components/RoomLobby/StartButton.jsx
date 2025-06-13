@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 
-const StartButton = ({ isHost, canStart }) => {
-  console.log(canStart);
+const StartButton = ({ isHost, canStart, roomId }) => {
+  const navigate = useNavigate();
+
   return (
     <div>
       <br />
@@ -11,6 +13,7 @@ const StartButton = ({ isHost, canStart }) => {
                 style={{
                   backgroundColor: isHost && canStart ? "orange" : "lightgray",
                 }}
+                onClick={() => navigate(`/battle/${roomId}`)}
               >
                 ゲームを開始する
               </button>
