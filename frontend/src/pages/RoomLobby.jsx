@@ -4,6 +4,7 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import LogPanel from '../components/RoomLobby/LogPanel';
 import RoomInfo from '../components/RoomLobby/RoomInfo';
 import StartButton from '../components/RoomLobby/StartButton';
+import ReturnHome from '../components/common/ReturnHome';
 
 const RoomLobby = () => {
   const location = useLocation();
@@ -59,6 +60,7 @@ const RoomLobby = () => {
         canStart={isReady && isOpponentReady}
       />
       <LogPanel logs={logs} />
+      <ReturnHome label={"退出する"} />
     </>
   );
 };

@@ -73,6 +73,8 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
 
   except WebSocketDisconnect:
     print('切断されました')
+    
+    # 切断したときに相手に通知
     rooms[room_id] = [member for member in rooms[room_id] if member["ws"] != websocket]
     names.discard(user_name)
 
