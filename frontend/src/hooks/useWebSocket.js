@@ -6,7 +6,8 @@ export const useWebSocket = ({
   setIsHost,
   setOpponentUserName,
   setIsOpponentReady,
-  onLog
+  onLog,
+  resetReady
 }) => {
   const ws = useRef(null);
   const opponentRef = useRef(null);
@@ -46,6 +47,7 @@ export const useWebSocket = ({
           onLog(`${data.userName} が退室しました。`);
           opponentRef.current = null;
           setOpponentUserName(null);
+          resetReady();
           becomeHost();
         }
       }

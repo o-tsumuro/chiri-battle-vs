@@ -1,5 +1,6 @@
 
 const StartButton = ({ isHost, canStart }) => {
+  console.log(canStart);
   return (
     <div>
       <br />

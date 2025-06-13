@@ -29,6 +29,11 @@ const RoomLobby = () => {
     });
   };
 
+  const resetReady = () => {
+    setIsReady(false);
+    setIsOpponentReady(false);
+  }
+
   const ws = useWebSocket({
     userName,
     roomId,
@@ -36,6 +41,7 @@ const RoomLobby = () => {
     setOpponentUserName,
     setIsOpponentReady,
     onLog: addLog,
+    resetReady
   });
   
   return (

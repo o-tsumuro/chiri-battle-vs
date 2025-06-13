@@ -20,7 +20,7 @@ const RoomInfo = ({
         />
         {opponentUserName ? (
           <div>
-            ${opponentUserName}(相手)
+            {opponentUserName}(相手)
             <span
               style={{
                 color: isOpponentReady ? "green" : "gray"
