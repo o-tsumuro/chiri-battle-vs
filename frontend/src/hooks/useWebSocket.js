@@ -1,4 +1,5 @@
 import { useRef, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 export const useWebSocket = ({
   userName,
@@ -11,6 +12,7 @@ export const useWebSocket = ({
 }) => {
   const ws = useRef(null);
   const opponentRef = useRef(null);
+  const navigate = useNavigate();
 
   const becomeHost = () => setIsHost(true);
   const revokeHost = () => setIsHost(false);
@@ -54,6 +56,10 @@ export const useWebSocket = ({
 
       if (data.type === "toggle_opponent_ready") {
         setIsOpponentReady(data.ready);
+      }
+
+      if (data.type === "start_game") {
+        navigate(`/battle/${roomId}`);
       }
     };
 

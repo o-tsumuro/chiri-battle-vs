@@ -1,6 +1,5 @@
 
 const ReadyButton = ({ isReady, opponentUserName, toggleReady }) => {
-  console.log("opponentUserName:", opponentUserName);
   return (
     <button
       onClick={() => toggleReady()}

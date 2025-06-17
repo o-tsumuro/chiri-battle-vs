@@ -1,12 +1,10 @@
 import { Outlet, useParams } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 import { useWebSocket } from "../../hooks/useWebSocket";
 import { useState } from "react";
 
 const GameSession = () => {
   const { roomId } = useParams();
-  const location = useLocation();
-  const userName = location.state?.userName;
+  const userName = sessionStorage.getItem("userName");
   const [opponentUserName, setOpponentUserName] = useState(null);
   const [isHost, setIsHost] = useState(false);
   const [logs, setLogs] = useState([]);

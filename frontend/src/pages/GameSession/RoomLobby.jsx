@@ -1,4 +1,4 @@
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import LogPanel from '../../components/RoomLobby/LogPanel';
 import RoomInfo from '../../components/RoomLobby/RoomInfo';
 import StartButton from '../../components/RoomLobby/StartButton';
@@ -17,6 +17,8 @@ const RoomLobby = () => {
     setIsReady,
   } = useOutletContext();
 
+  const navigate = useNavigate();
+
   const toggleReady = () => {
     setIsReady(prev => {
       const nextReady = !prev;
@@ -27,6 +29,11 @@ const RoomLobby = () => {
       return nextReady;
     });
   };
+
+  const handleStartGame = () => {
+    ws.current.send(JSON.stringify({ type: "start_game" }));
+    navigate(`/battle/${roomId}`, { state: { userName } });
+  }
 
   return (
     <>
@@ -41,7 +48,7 @@ const RoomLobby = () => {
       <StartButton
         isHost={isHost}
         canStart={isReady && isOpponentReady}
-        roomId={roomId}
+        onStartGame={handleStartGame}
       />
       <LogPanel logs={logs} />
       <ReturnHome label={"退出する"} />
