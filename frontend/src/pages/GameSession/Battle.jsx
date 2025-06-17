@@ -1,21 +1,20 @@
 import { useOutletContext } from "react-router-dom";
+import RoomInfo from "../../components/Battle/RoomInfo";
 
 const Battle = () => {
   const {
+    roomId,
     userName,
-    opponentUserName,
-    roomId
+    opponentUserName
   } = useOutletContext();
-
-  console.log(userName);
 
   return (
     <>
-      <p>
-        ルームID：{roomId} / 
-        あなたの名前：{userName} / 
-        相手の名前：{opponentUserName}
-      </p>
+      <RoomInfo
+        roomId={roomId}
+        userName={userName}
+        opponentUserName={opponentUserName}
+      />
     </>
   );
 };
