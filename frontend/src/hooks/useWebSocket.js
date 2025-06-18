@@ -59,7 +59,8 @@ export const useWebSocket = ({
       }
 
       if (data.type === "start_game") {
-        navigate(`/battle/${roomId}`);
+        const initPos = data.initPos;
+        navigate(`/battle/${roomId}`, {state: {initPos}});
       }
     };
 

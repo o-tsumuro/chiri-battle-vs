@@ -1,5 +1,6 @@
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useLocation } from "react-router-dom";
 import RoomInfo from "../../components/Battle/RoomInfo";
+import BattleContainer from "../../components/Battle/BattleContainer";
 
 const Battle = () => {
   const {
@@ -8,6 +9,9 @@ const Battle = () => {
     opponentUserName
   } = useOutletContext();
 
+  const location = useLocation();
+  const initPos = location.state?.initPos;
+
   return (
     <>
       <RoomInfo
@@ -15,6 +19,7 @@ const Battle = () => {
         userName={userName}
         opponentUserName={opponentUserName}
       />
+      <BattleContainer initPos={initPos} />
     </>
   );
 };

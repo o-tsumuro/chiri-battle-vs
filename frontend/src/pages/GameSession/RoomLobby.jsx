@@ -1,8 +1,9 @@
-import { useOutletContext, useNavigate } from 'react-router-dom';
+import { useOutletContext } from 'react-router-dom';
 import LogPanel from '../../components/RoomLobby/LogPanel';
 import RoomInfo from '../../components/RoomLobby/RoomInfo';
 import StartButton from '../../components/RoomLobby/StartButton';
 import ReturnHome from '../../components/common/ReturnHome';
+import { useRandomLocation } from '../../hooks/useRandomLocation';
 
 const RoomLobby = () => {
   const {
@@ -17,7 +18,7 @@ const RoomLobby = () => {
     setIsReady,
   } = useOutletContext();
 
-  const navigate = useNavigate();
+  const initPos = isHost ? useRandomLocation() : null;
 
   const toggleReady = () => {
     setIsReady(prev => {
@@ -31,8 +32,10 @@ const RoomLobby = () => {
   };
 
   const handleStartGame = () => {
-    ws.current.send(JSON.stringify({ type: "start_game" }));
-    navigate(`/battle/${roomId}`, { state: { userName } });
+    ws.current.send(JSON.stringify({
+      type: "start_game",
+      initPos: initPos
+    }));
   }
 
   return (
