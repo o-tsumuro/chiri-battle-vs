@@ -1,22 +1,26 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useDistanceCalc } from '../../hooks/useDistanceCalc.js';
-import { useRandomLocation } from '../../hooks/useRandomLocation.js';
 import StreetView from './StreetView.jsx';
+import MiniMap from './MiniMap.jsx';
 
-const BattleContainer = ({ initPos }) => {
+const BattleContainer = ({ initPos, ws }) => {
   const [myPos, setMyPos] = useState(null);
-  const opponentPosRef = useRef(null);
-  const { distanceCalc } = useDistanceCalc();
 
-  // const handleCalc = () => {
-  //   const myDist = distanceCalc(initPos, myPos);
-  //   const opponentDist = distanceCalc(initPos, opponentPosRef);
-  //   onFinish({ myDist, opponentDist, initPos, myPos, opponentPosRef });
-  // };
+  const confirmPosition = () => {
+    ws.current.send(JSON.stringify({
+      type: "confirm_position",
+      position: myPos,
+    }));
+  };
 
   return (
     <>
       <StreetView initPos={initPos} />
+      <MiniMap
+        markerPosition={myPos}
+        setMarkerPosition={setMyPos}
+        confirmPosition={confirmPosition}
+      />
     </>
   );
 };

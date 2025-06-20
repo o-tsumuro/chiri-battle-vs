@@ -4,6 +4,7 @@ import BattleContainer from "../../components/Battle/BattleContainer";
 
 const Battle = () => {
   const {
+    ws,
     roomId,
     userName,
     opponentUserName
@@ -19,7 +20,7 @@ const Battle = () => {
         userName={userName}
         opponentUserName={opponentUserName}
       />
-      <BattleContainer initPos={initPos} />
+      <BattleContainer initPos={initPos} ws={ws} />
     </>
   );
 };

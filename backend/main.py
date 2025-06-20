@@ -68,13 +68,23 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
 
       if json_data["type"] == "toggle_ready":
         ready = json_data["ready"]
-        
+
         for member in rooms[room_id]:
           if member["name"] != user_name:
             await member["ws"].send_json({
               "type": "toggle_opponent_ready",
               "ready": ready,
             })
+
+      if json_data["type"] == "confirm_position":
+        position = json_data["position"]
+
+        for member in rooms[room_id]:
+          await member["ws"].send_json({
+            "type": "confirm_position",
+            "userName": user_name,
+            "position": position,
+          })
 
       for client in rooms[room_id]:
         await client["ws"].send_json(json_data)

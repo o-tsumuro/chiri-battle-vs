@@ -12,6 +12,8 @@ export const useWebSocket = ({
 }) => {
   const ws = useRef(null);
   const opponentRef = useRef(null);
+  const myPosRef = useRef(null);
+  const opponentPosRef = useRef(null);
   const navigate = useNavigate();
 
   const becomeHost = () => setIsHost(true);
@@ -61,6 +63,23 @@ export const useWebSocket = ({
       if (data.type === "start_game") {
         const initPos = data.initPos;
         navigate(`/battle/${roomId}`, {state: {initPos}});
+      }
+
+      if (data.type === "confirm_position") {
+        if (data.userName === userName) {
+          myPosRef.current = data.position;
+        } else {
+          opponentPosRef.current = data.position;
+        }
+
+        if (myPosRef.current && opponentPosRef.current) {
+          navigate("/result", {
+            state: {
+              myPos: myPosRef.current,
+              opponentPos: opponentPosRef.current
+            }
+          });
+        }
       }
     };
 
