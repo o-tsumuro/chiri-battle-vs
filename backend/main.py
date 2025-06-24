@@ -77,17 +77,16 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
             })
 
       if json_data["type"] == "confirm_position":
+        init_position = json_data["initPos"]
         position = json_data["position"]
 
         for member in rooms[room_id]:
           await member["ws"].send_json({
             "type": "confirm_position",
+            "initPos": init_position,
             "userName": user_name,
             "position": position,
           })
-
-      for client in rooms[room_id]:
-        await client["ws"].send_json(json_data)
 
   except WebSocketDisconnect:
     print('切断されました')
