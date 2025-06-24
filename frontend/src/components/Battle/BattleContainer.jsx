@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useDistanceCalc } from '../../hooks/useDistanceCalc.js';
 import StreetView from './StreetView.jsx';
 import MiniMap from './MiniMap.jsx';
 
@@ -9,6 +8,7 @@ const BattleContainer = ({ initPos, ws }) => {
   const confirmPosition = () => {
     ws.current.send(JSON.stringify({
       type: "confirm_position",
+      initPos: initPos,
       position: myPos,
     }));
   };
