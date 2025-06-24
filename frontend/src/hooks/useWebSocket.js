@@ -66,6 +66,7 @@ export const useWebSocket = ({
       }
 
       if (data.type === "confirm_position") {
+        let initPos = data.initPos;
         if (data.userName === userName) {
           myPosRef.current = data.position;
         } else {
@@ -73,8 +74,9 @@ export const useWebSocket = ({
         }
 
         if (myPosRef.current && opponentPosRef.current) {
-          navigate("/result", {
+          navigate(`/battle/${roomId}/result`, {
             state: {
+              initPos: initPos,
               myPos: myPosRef.current,
               opponentPos: opponentPosRef.current
             }
