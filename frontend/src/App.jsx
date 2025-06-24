@@ -6,6 +6,7 @@ import SoloPlay from './pages/SoloPlay';
 import RoomLobby from './pages/GameSession/RoomLobby';
 import Battle from './pages/GameSession/Battle';
 import GameSession from './pages/GameSession';
+import Result from './pages/GameSession/Result';
 
 function App() {
   const [gameKey, setGameKey] = useState(0);
@@ -25,6 +26,7 @@ function App() {
           <Route path="/battle/:roomId" element={<GameSession />} >
             <Route path="lobby" element={<RoomLobby />} />
             <Route index element={<Battle />} />
+            <Route path="result" element={<Result />} />
           </Route>
         </Routes>
       </LoadScript>
