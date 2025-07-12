@@ -15,8 +15,17 @@ const ResultFooter = ({
 
   return (
     <>
-      <h2>{`${userName}(あなた)：${formatDistance(myDistance)}`}</h2>
-      <h2>{`${opponentUserName}(相手)：${formatDistance(opponentDistance)}`}</h2>
+      {opponentDistance >= myDistance ? (
+        <h1>
+          {userName}の勝利！！
+        </h1>
+      ) : (
+        <h1>
+          {opponentUserName}の勝利！！
+        </h1>
+      )}
+      <h2>{`🔵${userName}(あなた)：${formatDistance(myDistance)}`}</h2>
+      <h2>{`🔴${opponentUserName}(相手)：${formatDistance(opponentDistance)}`}</h2>
     </>
   );
 };
