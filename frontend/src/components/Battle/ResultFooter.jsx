@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ReturnHome from '../common/ReturnHome';
 
 const ResultFooter = ({
   roomId,
@@ -30,6 +31,7 @@ const ResultFooter = ({
       <h2>{`🔵${userName}(あなた)：${formatDistance(myDistance)}`}</h2>
       <h2>{`🔴${opponentUserName}(相手)：${formatDistance(opponentDistance)}`}</h2>
       <Link to={`/battle/${roomId}/lobby`}>もう一度プレイする(ルームに戻る)</Link>
+      <ReturnHome label={"終了する"} />
     </>
   );
 };
