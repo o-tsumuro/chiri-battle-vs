@@ -5,6 +5,7 @@ import ResultMap from "../../components/Battle/ResultMap";
 
 const Result = () => {
   const {
+    roomId,
     userName,
     opponentUserName
   } = useOutletContext();
@@ -23,6 +24,7 @@ const Result = () => {
         opponentPos={opponentPos}
       />
       <ResultFooter
+        roomId={roomId}
         userName={userName}
         opponentUserName={opponentUserName}
         myDistance={distanceCalc(initPos, myPos)}

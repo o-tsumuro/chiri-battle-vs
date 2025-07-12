@@ -21,6 +21,7 @@ const GameSession = () => {
   const ws = useWebSocket({
     userName,
     roomId,
+    setIsReady,
     setIsHost,
     setOpponentUserName,
     setIsOpponentReady,

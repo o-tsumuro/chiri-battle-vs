@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 export const useWebSocket = ({
   userName,
   roomId,
+  setIsReady,
   setIsHost,
   setOpponentUserName,
   setIsOpponentReady,
@@ -61,6 +62,10 @@ export const useWebSocket = ({
       }
 
       if (data.type === "start_game") {
+        setIsReady(false);
+        setIsOpponentReady(false);
+        myPosRef.current = null;
+        opponentPosRef.current = null;
         const initPos = data.initPos;
         navigate(`/battle/${roomId}`, {state: {initPos}});
       }
